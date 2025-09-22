@@ -1,6 +1,7 @@
 package main
 
 import (
+	"downloader/pkg/httputils/middlewares"
 	"downloader/pkg/services/task"
 	"log"
 	"net/http"
@@ -12,7 +13,7 @@ func main() {
 	service := task.NewService()
 	mux.HandleFunc("POST /tasks", service.HandleCreateTask)
 
-	handler := mux
+	handler := middlewares.WithLogger(mux)
 
 	server := &http.Server{Addr: ":8080", Handler: handler}
 
