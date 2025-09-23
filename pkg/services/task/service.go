@@ -1,6 +1,7 @@
 package task
 
 import (
+	"downloader/pkg/httputils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -36,11 +37,7 @@ func (s *Service) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusAccepted)
-	err = json.NewEncoder(w).Encode(task.AsJSON())
-	if err != nil {
-		log.Printf("ERROR: encoding json: %v\n", err)
-	}
+	httputils.WriteJSON(w, task.AsJSON(), http.StatusAccepted)
 }
 
 func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
@@ -58,11 +55,7 @@ func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(task.AsJSON())
-	if err != nil {
-		log.Printf("ERROR: encoding json: %v\n", err)
-	}
+	httputils.WriteJSON(w, task.AsJSON(), http.StatusOK)
 }
 
 // TODO: add validation
