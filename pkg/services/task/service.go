@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type Service struct {
@@ -36,6 +37,28 @@ func (s *Service) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusAccepted)
+	err = json.NewEncoder(w).Encode(task.AsJSON())
+	if err != nil {
+		log.Printf("ERROR: encoding json: %v\n", err)
+	}
+}
+
+func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
+	taskIDStr := r.PathValue("task_id")
+	taskID, err := strconv.Atoi(taskIDStr)
+	if err != nil {
+		log.Printf("WARN: decoding task_id: %v\n", err)
+		http.Error(w, `{"error":"task not found"}`, http.StatusNotFound)
+		return
+	}
+	task, found := s.tasksStorage.Find(taskID)
+	if !found {
+		log.Printf("WARN: can't find task with id %v\n", taskID)
+		http.Error(w, `{"error":"task not found"}`, http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(task.AsJSON())
 	if err != nil {
 		log.Printf("ERROR: encoding json: %v\n", err)

@@ -12,6 +12,7 @@ func main() {
 
 	service := task.NewService()
 	mux.HandleFunc("POST /tasks", service.HandleCreateTask)
+	mux.HandleFunc("GET /tasks/{task_id}", service.HandleGetTask)
 
 	handler := middlewares.WithLogger(mux)
 

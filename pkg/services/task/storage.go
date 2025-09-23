@@ -21,3 +21,9 @@ func (s *storage) Save(t *task) {
 
 	s.nextTaskID++
 }
+
+// NOTE: maybe we should return a copy of the task
+func (s *storage) Find(id int) (*task, bool) {
+	task, found := s.tasks[id]
+	return task, found
+}
