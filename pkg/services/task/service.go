@@ -10,10 +10,11 @@ import (
 
 type Service struct {
 	tasksStorage *storage
+	processor    *processor
 }
 
 func NewService() *Service {
-	return &Service{tasksStorage: NewStorage()}
+	return &Service{tasksStorage: NewStorage(), processor: newProcessor()}
 }
 
 type taskRequestDTO struct {
@@ -61,9 +62,10 @@ func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
 // TODO: add validation
 // TODO: add the actual logic
 func (s *Service) createTask(links []string) (*task, error) {
-	t := &task{links: links}
+	t := newTask(links)
 
 	s.tasksStorage.Save(t)
+	s.processor.Start(t)
 
 	return t, nil
 }
