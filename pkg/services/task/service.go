@@ -7,13 +7,11 @@ import (
 )
 
 type Service struct {
-	// TODO: lock this by the mutex
-	// NOTE: maybe we should make this UUID
-	nextTaskID int
+	tasksStorage *storage
 }
 
 func NewService() *Service {
-	return &Service{nextTaskID: 1}
+	return &Service{tasksStorage: NewStorage()}
 }
 
 type taskRequestDTO struct {
@@ -47,10 +45,9 @@ func (s *Service) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
 // TODO: add validation
 // TODO: add the actual logic
 func (s *Service) createTask(links []string) (*task, error) {
-	t := &task{id: s.nextTaskID, links: links}
+	t := &task{links: links}
 
-	// WARN: this is totally not thread safe
-	// TODO: create the storage
-	s.nextTaskID++
+	s.tasksStorage.Save(t)
+
 	return t, nil
 }
