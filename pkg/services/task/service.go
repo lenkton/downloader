@@ -1,14 +1,12 @@
 package task
 
 import (
+	"downloader/pkg/fileutils"
 	"downloader/pkg/httputils"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -24,20 +22,11 @@ func NewService() *Service {
 const DownloadDir = "./downloads/"
 
 func (s *Service) EnsureDownloadDir() error {
-	_, err := os.Stat(DownloadDir)
-	if err == nil {
-		return nil
+	err := fileutils.EnsureDir(DownloadDir)
+	if err != nil {
+		return fmt.Errorf("ensure download dir: %v", err)
 	}
-
-	if errors.Is(err, fs.ErrNotExist) {
-		innerErr := os.Mkdir(DownloadDir, 0750)
-		if innerErr != nil {
-			return fmt.Errorf("creating the dir: %v", innerErr)
-		}
-		return nil
-	}
-
-	return fmt.Errorf("checking the dir: %v", err)
+	return nil
 }
 
 type taskRequestDTO struct {
