@@ -1,10 +1,11 @@
 package main
 
 import (
-	"downloader/pkg/httputils/middlewares"
-	"downloader/pkg/services/task"
 	"log"
 	"net/http"
+
+	"github.com/lenkton/downloader/pkg/httputils/middlewares"
+	"github.com/lenkton/downloader/pkg/services/task"
 )
 
 func main() {

@@ -1,13 +1,14 @@
 package task
 
 import (
-	"downloader/pkg/fileutils"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/lenkton/downloader/pkg/fileutils"
 )
 
 type processor struct {

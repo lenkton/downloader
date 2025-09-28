@@ -1,13 +1,14 @@
 package task
 
 import (
-	"downloader/pkg/fileutils"
-	"downloader/pkg/httputils"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/lenkton/downloader/pkg/fileutils"
+	"github.com/lenkton/downloader/pkg/httputils"
 )
 
 type Service struct {
