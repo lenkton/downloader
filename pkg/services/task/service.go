@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/lenkton/downloader/pkg/fileutil"
 	"github.com/lenkton/downloader/pkg/httputil"
@@ -56,14 +55,18 @@ func (s *Service) handleCreateTask(w http.ResponseWriter, r *http.Request) {
 	httputil.WriteJSON(w, task.AsJSON(), http.StatusAccepted)
 }
 
+type taskIDContextKey struct{}
+
 func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
-	taskIDStr := r.PathValue("task_id")
-	taskID, err := strconv.Atoi(taskIDStr)
-	if err != nil {
-		log.Printf("WARN: decoding task_id: %v\n", err)
-		http.Error(w, `{"error":"task not found"}`, http.StatusNotFound)
-		return
-	}
+	var handler http.Handler = http.HandlerFunc(s.handleGetTask)
+	handler = httputil.WithPathIntID(handler, "task_id", taskIDContextKey{})
+
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Service) handleGetTask(w http.ResponseWriter, r *http.Request) {
+	taskID := r.Context().Value(taskIDContextKey{}).(int)
+
 	task, found := s.tasksStorage.Find(taskID)
 	if !found {
 		log.Printf("WARN: can't find task with id %v\n", taskID)

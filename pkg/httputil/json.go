@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func WriteJSON(w http.ResponseWriter, object any, code int) {
@@ -35,6 +36,20 @@ func WithJSONBody[T any](next http.Handler, key any) http.Handler {
 			return
 		}
 		ctx := context.WithValue(r.Context(), key, dto)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func WithPathIntID(next http.Handler, pathName string, key any) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue(pathName)
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			log.Printf("WARN: decoding path id: %v\n", err)
+			http.Error(w, `{"error":"not found"}`, http.StatusNotFound)
+			return
+		}
+		ctx := context.WithValue(r.Context(), key, id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
