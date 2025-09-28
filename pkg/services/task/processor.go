@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/lenkton/downloader/pkg/fileutils"
+	"github.com/lenkton/downloader/pkg/fileutil"
 )
 
 type processor struct {
@@ -26,7 +26,7 @@ func (p *processor) Start(t *task) {
 
 func downloadLinks(t *task) {
 	taskDir := filepath.Join(DownloadDir, strconv.Itoa(t.id))
-	fileutils.EnsureDir(taskDir)
+	fileutil.EnsureDir(taskDir)
 
 	for i, link := range t.links {
 		fp := filepath.Join(taskDir, strconv.Itoa(i))

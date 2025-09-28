@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lenkton/downloader/pkg/fileutils"
-	"github.com/lenkton/downloader/pkg/httputils"
+	"github.com/lenkton/downloader/pkg/fileutil"
+	"github.com/lenkton/downloader/pkg/httputil"
 )
 
 type Service struct {
@@ -23,7 +23,7 @@ func NewService() *Service {
 const DownloadDir = "./downloads/"
 
 func (s *Service) EnsureDownloadDir() error {
-	err := fileutils.EnsureDir(DownloadDir)
+	err := fileutil.EnsureDir(DownloadDir)
 	if err != nil {
 		return fmt.Errorf("ensure download dir: %v", err)
 	}
@@ -51,7 +51,7 @@ func (s *Service) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputils.WriteJSON(w, task.AsJSON(), http.StatusAccepted)
+	httputil.WriteJSON(w, task.AsJSON(), http.StatusAccepted)
 }
 
 func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +69,7 @@ func (s *Service) HandleGetTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputils.WriteJSON(w, task.AsJSON(), http.StatusOK)
+	httputil.WriteJSON(w, task.AsJSON(), http.StatusOK)
 }
 
 // TODO: add validation

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lenkton/downloader/pkg/httputils/middlewares"
+	"github.com/lenkton/downloader/pkg/httputil/middleware"
 	"github.com/lenkton/downloader/pkg/services/task"
 )
 
@@ -16,7 +16,7 @@ func main() {
 	mux.HandleFunc("POST /tasks", service.HandleCreateTask)
 	mux.HandleFunc("GET /tasks/{task_id}", service.HandleGetTask)
 
-	handler := middlewares.WithLogger(mux)
+	handler := middleware.WithLogger(mux)
 
 	server := &http.Server{Addr: ":8080", Handler: handler}
 
