@@ -1,7 +1,6 @@
 package task
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -34,14 +33,17 @@ type taskRequestDTO struct {
 	Links []string `json:"links"`
 }
 
+type taskRequestDTOContextKey struct{}
+
 func (s *Service) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
-	tr := &taskRequestDTO{}
-	err := json.NewDecoder(r.Body).Decode(tr)
-	if err != nil {
-		log.Printf("ERROR: decoding json: %v\n", err)
-		http.Error(w, `{"error":"malformed request body"}`, http.StatusUnprocessableEntity)
-		return
-	}
+	var handler http.Handler = http.HandlerFunc(s.handleCreateTask)
+	handler = httputil.WithJSONBody[taskRequestDTO](handler, taskRequestDTOContextKey{})
+
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Service) handleCreateTask(w http.ResponseWriter, r *http.Request) {
+	tr := r.Context().Value(taskRequestDTOContextKey{}).(*taskRequestDTO)
 
 	task, err := s.createTask(tr.Links)
 	if err != nil {
